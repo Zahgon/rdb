@@ -1,11 +1,8 @@
 package d3flame
 
 import (
-	"encoding/json"
-	"fmt"
 	"html/template"
 	"net/http"
-	"strconv"
 )
 
 var flameTmplData = &struct {
@@ -22,14 +19,7 @@ var flameTmplData = &struct {
 	BootstrapCSS: template.CSS(bootstrapCSS),
 }
 
-func flamegraph(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.New("flamegraph").Parse(html))
-	err := tmpl.Execute(w, flameTmplData)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = w.Write([]byte("500 - Internal Error"))
-	}
-}
+func flamegraph(w http.ResponseWriter, r *http.Request) { _ = "STUB: not implemented"; return }
 
 // FlameItem is an Element in flamegraph
 type FlameItem struct {
@@ -38,44 +28,12 @@ type FlameItem struct {
 	Children children `json:"c,omitempty"`
 }
 
-func (ch children) MarshalJSON() ([]byte, error) {
-	list := make([]*FlameItem, 0, len(ch))
-	for _, v := range ch {
-		list = append(list, v)
-	}
-	return json.Marshal(list)
-}
+func (ch children) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // AddChild add a child node into FlameItem
-func (node *FlameItem) AddChild(n *FlameItem) {
-	node.Children[n.Name] = n
-}
+func (node *FlameItem) AddChild(n *FlameItem) { _ = "STUB: not implemented"; return }
 
 type children map[string]*FlameItem
 
 // Web starts a web server to render flamegraph
-func Web(data []byte, port int) chan<- struct{} {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/flamegraph", flamegraph)
-	mux.HandleFunc("/stacks.json", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write(data)
-	})
-	server := &http.Server{
-		Addr:    ":" + strconv.Itoa(port),
-		Handler: mux,
-	}
-	fmt.Printf("see http://localhost:%d/flamegraph\n", port)
-	stop := make(chan struct{})
-	go func() {
-		<-stop
-		_ = server.Close()
-	}()
-	go func() {
-		err := server.ListenAndServe()
-		if err != nil && err != http.ErrServerClosed {
-			panic(err)
-		}
-	}()
-	return stop
-}
+func Web(data []byte, port int) chan<- struct{} { _ = "STUB: not implemented"; return nil }

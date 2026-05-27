@@ -12,22 +12,27 @@ import (
 // https://github.com/spiermar/d3-flame-graph
 
 // https://cdn.jsdelivr.net/gh/spiermar/d3-flame-graph@2.0.3/dist/d3-flamegraph.css
+//
 //go:embed d3-flamegraph.css
 var d3Css string
 
 // https://d3js.org/d3.v4.min.js
+//
 //go:embed d3.v4.min.js
 var d3Js string
 
 // https://cdn.jsdelivr.net/gh/spiermar/d3-flame-graph@2.0.3/dist/d3-flamegraph.min.js
+//
 //go:embed d3-flamegraph.min.js
 var d3FlameGraphJs string
 
 // https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js
+//
 //go:embed d3-tip.min.js
 var d3TipJs string
 
 // https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css
+//
 //go:embed bootstrap.min.css
 var bootstrapCSS string
 

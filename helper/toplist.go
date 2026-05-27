@@ -1,9 +1,5 @@
 package helper
 
-import (
-	"sort"
-)
-
 type Sized interface {
 	GetSize() int
 }
@@ -13,20 +9,6 @@ type topList struct {
 	capacity int
 }
 
-func (tl *topList) add(x Sized) {
-	index := sort.Search(len(tl.list), func(i int) bool {
-		return tl.list[i].GetSize() <= x.GetSize()
-	})
-	tl.list = append(tl.list, x)
-	copy(tl.list[index+1:], tl.list[index:])
-	tl.list[index] = x
-	if len(tl.list) > tl.capacity {
-		tl.list = tl.list[:tl.capacity]
-	}
-}
+func (tl *topList) add(x Sized) { _ = "STUB: not implemented"; return }
 
-func newToplist(cap int) *topList {
-	return &topList{
-		capacity: cap,
-	}
-}
+func newToplist(cap int) *topList { _ = "STUB: not implemented"; return nil }

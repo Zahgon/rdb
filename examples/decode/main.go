@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/hdt3213/rdb/parser"
 	"os"
+
+	"github.com/hdt3213/rdb/parser"
 )
 
 func main() {

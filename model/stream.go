@@ -1,7 +1,5 @@
 package model
 
-import "strconv"
-
 // StreamObject stores a stream object
 type StreamObject struct {
 	*BaseObject
@@ -24,11 +22,13 @@ type StreamObject struct {
 }
 
 func (obj *StreamObject) GetType() string {
-	return StreamType
+	_ = "STUB: not implemented"
+
+	// StreamEntry is a node in the underlying radix tree of redis stream, of type listpacks, which contains several messages.
+	// There is no need to care about which entry the message belongs to when using it.
+	return ""
 }
 
-// StreamEntry is a node in the underlying radix tree of redis stream, of type listpacks, which contains several messages.
-// There is no need to care about which entry the message belongs to when using it.
 type StreamEntry struct {
 	FirstMsgId *StreamId        `json:"firstMsgId"`
 	Fields     []string         `json:"fields"`
@@ -49,8 +49,8 @@ type StreamId struct {
 }
 
 func (id *StreamId) MarshalText() (text []byte, err error) {
-	txt := strconv.FormatUint(id.Ms, 10) + "-" + strconv.FormatUint(id.Sequence, 10)
-	return []byte(txt), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // StreamGroup is a consumer group

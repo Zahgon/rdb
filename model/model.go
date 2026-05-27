@@ -1,7 +1,6 @@
 package model
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -102,49 +101,47 @@ type BaseObject struct {
 
 // GetKey returns key of object
 func (o *BaseObject) GetKey() string {
-	return o.Key
+	_ = "STUB: not implemented"
+
+	// GetDBIndex returns db index of object
+	return ""
 }
 
-// GetDBIndex returns db index of object
 func (o *BaseObject) GetDBIndex() int {
-	return o.DB
-}
+	_ = "STUB: not implemented"
 
-// GetEncoding returns encoding of object
-func (o *BaseObject) GetEncoding() string {
-	return o.Encoding
-}
-
-// GetExpiration returns expiration time, expiration of persistent object is nil
-func (o *BaseObject) GetExpiration() *time.Time {
-	return o.Expiration
-}
-
-// GetSize  returns rdb value size in Byte
-func (o *BaseObject) GetSize() int {
-	return o.Size
-}
-
-// GetElemCount returns number of elements in list/set/hash/zset
-func (o *BaseObject) GetElemCount() int {
+	// GetEncoding returns encoding of object
 	return 0
 }
 
-// GetIdleTime returns LRU idle time of object, -1 if not available
-func (o *BaseObject) GetIdleTime() int64 {
-	if o.IdleTime == nil {
-		return -1
-	}
-	return *o.IdleTime
+func (o *BaseObject) GetEncoding() string {
+	_ = "STUB: not implemented"
+
+	// GetExpiration returns expiration time, expiration of persistent object is nil
+	return ""
 }
 
-// GetFreq returns LFU frequency of object, -1 if not available
-func (o *BaseObject) GetFreq() int64 {
-	if o.Freq == nil {
-		return -1
-	}
-	return *o.Freq
+func (o *BaseObject) GetExpiration() *time.Time { _ = "STUB: not implemented"; return nil }
+
+// GetSize  returns rdb value size in Byte
+func (o *BaseObject) GetSize() int {
+	_ = "STUB: not implemented"
+
+	// GetElemCount returns number of elements in list/set/hash/zset
+	return 0
 }
+
+func (o *BaseObject) GetElemCount() int {
+	_ = "STUB: not implemented"
+
+	// GetIdleTime returns LRU idle time of object, -1 if not available
+	return 0
+}
+
+func (o *BaseObject) GetIdleTime() int64 { _ = "STUB: not implemented"; return 0 }
+
+// GetFreq returns LFU frequency of object, -1 if not available
+func (o *BaseObject) GetFreq() int64 { _ = "STUB: not implemented"; return 0 }
 
 // StringObject stores a string object
 type StringObject struct {
@@ -154,20 +151,13 @@ type StringObject struct {
 
 // GetType returns redis object type
 func (o *StringObject) GetType() string {
-	return StringType
+	_ = "STUB: not implemented"
+
+	// MarshalJSON marshal []byte as string
+	return ""
 }
 
-// MarshalJSON marshal []byte as string
-func (o *StringObject) MarshalJSON() ([]byte, error) {
-	o2 := struct {
-		*BaseObject
-		Value string `json:"value"`
-	}{
-		BaseObject: o.BaseObject,
-		Value:      string(o.Value),
-	}
-	return json.Marshal(o2)
-}
+func (o *StringObject) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // ListObject stores a list object
 type ListObject struct {
@@ -177,29 +167,16 @@ type ListObject struct {
 
 // GetType returns redis object type
 func (o *ListObject) GetType() string {
-	return ListType
+	_ = "STUB: not implemented"
+
+	// GetElemCount returns number of elements in list/set/hash/zset
+	return ""
 }
 
-// GetElemCount returns number of elements in list/set/hash/zset
-func (o *ListObject) GetElemCount() int {
-	return len(o.Values)
-}
+func (o *ListObject) GetElemCount() int { _ = "STUB: not implemented"; return 0 }
 
 // MarshalJSON marshal []byte as string
-func (o *ListObject) MarshalJSON() ([]byte, error) {
-	values := make([]string, len(o.Values))
-	for i, v := range o.Values {
-		values[i] = string(v)
-	}
-	o2 := struct {
-		*BaseObject
-		Values []string `json:"values"`
-	}{
-		BaseObject: o.BaseObject,
-		Values:     values,
-	}
-	return json.Marshal(o2)
-}
+func (o *ListObject) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // HashObject stores a hash object
 type HashObject struct {
@@ -210,43 +187,22 @@ type HashObject struct {
 
 // GetType returns redis object type
 func (o *HashObject) GetType() string {
-	return HashType
+	_ = "STUB: not implemented"
+
+	// GetElemCount returns number of elements in list/set/hash/zset
+	return ""
 }
 
-// GetElemCount returns number of elements in list/set/hash/zset
 func (o *HashObject) GetElemCount() int {
-	return len(o.Hash)
+	_ = "STUB: not implemented"
+
+	// MarshalJSON marshal []byte as string
+	return 0
 }
 
-// MarshalJSON marshal []byte as string
-func (o *HashObject) MarshalJSON() ([]byte, error) {
-	m := make(map[string]string)
-	for k, v := range o.Hash {
-		m[k] = string(v)
-	}
-	if len(o.FieldExpirations) == len(o.Hash) {
-		// hash/listpack with HFE
-		o2 := struct {
-			*BaseObject
-			Hash             map[string]string `json:"hash"`
-			FieldExpirations map[string]int64  `json:"expire"`
-		}{
-			BaseObject:       o.BaseObject,
-			Hash:             m,
-			FieldExpirations: o.FieldExpirations,
-		}
-		return json.Marshal(o2)
-	} else {
-		o2 := struct {
-			*BaseObject
-			Hash map[string]string `json:"hash"`
-		}{
-			BaseObject: o.BaseObject,
-			Hash:       m,
-		}
-		return json.Marshal(o2)
-	}
-}
+func (o *HashObject) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
+
+// hash/listpack with HFE
 
 // SetObject stores a set object
 type SetObject struct {
@@ -256,29 +212,16 @@ type SetObject struct {
 
 // GetType returns redis object type
 func (o *SetObject) GetType() string {
-	return SetType
+	_ = "STUB: not implemented"
+
+	// GetElemCount returns number of elements in list/set/hash/zset
+	return ""
 }
 
-// GetElemCount returns number of elements in list/set/hash/zset
-func (o *SetObject) GetElemCount() int {
-	return len(o.Members)
-}
+func (o *SetObject) GetElemCount() int { _ = "STUB: not implemented"; return 0 }
 
 // MarshalJSON marshal []byte as string
-func (o *SetObject) MarshalJSON() ([]byte, error) {
-	values := make([]string, len(o.Members))
-	for i, v := range o.Members {
-		values[i] = string(v)
-	}
-	o2 := struct {
-		*BaseObject
-		Members []string `json:"members"`
-	}{
-		BaseObject: o.BaseObject,
-		Members:    values,
-	}
-	return json.Marshal(o2)
-}
+func (o *SetObject) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // ZSetEntry is a key-score in sorted set
 type ZSetEntry struct {
@@ -294,13 +237,13 @@ type ZSetObject struct {
 
 // GetType returns redis object type
 func (o *ZSetObject) GetType() string {
-	return ZSetType
+	_ = "STUB: not implemented"
+
+	// GetElemCount returns number of elements in list/set/hash/zset
+	return ""
 }
 
-// GetElemCount returns number of elements in list/set/hash/zset
-func (o *ZSetObject) GetElemCount() int {
-	return len(o.Entries)
-}
+func (o *ZSetObject) GetElemCount() int { _ = "STUB: not implemented"; return 0 }
 
 // AuxObject stores redis metadata
 type AuxObject struct {
@@ -310,20 +253,13 @@ type AuxObject struct {
 
 // GetType returns redis object type
 func (o *AuxObject) GetType() string {
-	return AuxType
+	_ = "STUB: not implemented"
+
+	// MarshalJSON marshal []byte as string
+	return ""
 }
 
-// MarshalJSON marshal []byte as string
-func (o *AuxObject) MarshalJSON() ([]byte, error) {
-	o2 := struct {
-		*BaseObject
-		Value string `json:"value"`
-	}{
-		BaseObject: o.BaseObject,
-		Value:      string(o.Value),
-	}
-	return json.Marshal(o2)
-}
+func (o *AuxObject) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // FunctionsObject stores redis functions
 type FunctionsObject struct {
@@ -332,9 +268,7 @@ type FunctionsObject struct {
 }
 
 // GetType returns redis object type
-func (o *FunctionsObject) GetType() string {
-	return FunctionsType
-}
+func (o *FunctionsObject) GetType() string { _ = "STUB: not implemented"; return "" }
 
 // DBSizeObject stores db size metadata
 type DBSizeObject struct {
@@ -345,10 +279,12 @@ type DBSizeObject struct {
 
 // GetType returns redis object type
 func (o *DBSizeObject) GetType() string {
-	return DBSizeType
+	_ = "STUB: not implemented"
+
+	// ModuleTypeObject stores a module type object parsed by custom handler
+	return ""
 }
 
-// ModuleTypeObject stores a module type object parsed by custom handler
 type ModuleTypeObject struct {
 	*BaseObject
 	ModuleType string
@@ -356,20 +292,10 @@ type ModuleTypeObject struct {
 }
 
 // GetType returns module type name
-func (o *ModuleTypeObject) GetType() string {
-	return o.ModuleType
-}
+func (o *ModuleTypeObject) GetType() string { _ = "STUB: not implemented"; return "" }
 
 // MarshalJSON marshal []byte as string
 func (o *ModuleTypeObject) MarshalJSON() ([]byte, error) {
-	o2 := struct {
-		*BaseObject
-		ModuleType string      `json:"moduleType"`
-		Value      interface{} `json:"value"`
-	}{
-		BaseObject: o.BaseObject,
-		ModuleType: o.ModuleType,
-		Value:      o.Value,
-	}
-	return json.Marshal(o2)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

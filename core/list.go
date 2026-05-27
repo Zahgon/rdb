@@ -1,8 +1,6 @@
 package core
 
 import (
-	"encoding/binary"
-	"errors"
 	"github.com/hdt3213/rdb/model"
 )
 
@@ -21,177 +19,35 @@ const (
 	zipBigPrevLen = 0xfe
 )
 
-func (dec *Decoder) readList() ([][]byte, error) {
-	size64, _, err := dec.readLength()
-	if err != nil {
-		return nil, err
-	}
-	size := int(size64)
-	values := make([][]byte, 0, size)
-	for i := 0; i < size; i++ {
-		val, err := dec.readString()
-		if err != nil {
-			return nil, err
-		}
-		values = append(values, val)
-	}
-	return values, nil
-}
+func (dec *Decoder) readList() ([][]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 func (dec *Decoder) readQuickList() ([][]byte, *model.QuicklistDetail, error) {
-	size, _, err := dec.readLength()
-	if err != nil {
-		return nil, nil, err
-	}
-	entries := make([][]byte, 0)
-	detail := &model.QuicklistDetail{}
-	for i := 0; i < int(size); i++ {
-		page, err := dec.readZipList()
-		if err != nil {
-			return nil, nil, err
-		}
-		entries = append(entries, page...)
-		detail.ZiplistStruct = append(detail.ZiplistStruct, page)
-	}
-	return entries, detail, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // readQuickList2 returns
 func (dec *Decoder) readQuickList2() ([][]byte, *model.Quicklist2Detail, error) {
-	size, _, err := dec.readLength()
-	if err != nil {
-		return nil, nil, err
-	}
-	entries := make([][]byte, 0)
-	detail := &model.Quicklist2Detail{}
-	for i := 0; i < int(size); i++ {
-		length, _, err := dec.readLength()
-		if err != nil {
-			return nil, nil, err
-		}
-		if length == model.QuicklistNodeContainerPlain {
-			entry, err := dec.readString()
-			if err != nil {
-				return nil, nil, err
-			}
-			entries = append(entries, entry)
-			detail.NodeEncodings = append(detail.NodeEncodings, model.QuicklistNodeContainerPlain)
-		} else if length == model.QuicklistNodeContainerPacked {
-			page, lengths, err := dec.readListPack()
-			if err != nil {
-				return nil, nil, err
-			}
-			entries = append(entries, page...)
-			detail.NodeEncodings = append(detail.NodeEncodings, model.QuicklistNodeContainerPacked)
-			detail.ListPackEntrySize = append(detail.ListPackEntrySize, lengths)
-		} else {
-			return nil, nil, errors.New("unknown quicklist node type")
-		}
-
-	}
-	return entries, detail, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 func (enc *Encoder) WriteListObject(key string, values [][]byte, options ...interface{}) error {
-	err := enc.beforeWriteObject(options...)
-	if err != nil {
-		return err
-	}
-	ok, err := enc.tryWriteListZipList(key, values, options...)
-	if err != nil {
-		return err
-	}
-	if !ok {
-		err = enc.writeQuickList(key, values, options...)
-		if err != nil {
-			return err
-		}
-	}
-	enc.state = writtenObjectState
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (enc *Encoder) tryWriteListZipList(key string, values [][]byte, options ...interface{}) (bool, error) {
-	if len(values) > enc.listZipListOpt.getMaxEntries() {
-		return false, nil
-	}
-	strList := make([]string, 0, len(values))
-	maxValue := enc.listZipListOpt.getMaxValue()
-	for _, v := range values {
-		if len(v) > maxValue {
-			return false, nil
-		}
-		strList = append(strList, unsafeBytes2Str(v))
-	}
-	err := enc.write([]byte{typeListZipList})
-	if err != nil {
-		return true, err
-	}
-	err = enc.writeString(key)
-	if err != nil {
-		return true, err
-	}
-	err = enc.writeZipList(strList)
-	if err != nil {
-		return true, err
-	}
-	return true, nil
+	_ = "STUB: not implemented"
+	return false, nil
 }
 
 func (enc *Encoder) writeQuickList(key string, values [][]byte, options ...interface{}) error {
-	var pages [][]string
-	pageSize := 0
-	var curPage []string
-	for _, value := range values {
-		curPage = append(curPage, unsafeBytes2Str(value))
-		pageSize += len(value)
-		if pageSize >= enc.listZipListSize {
-			pageSize = 0
-			pages = append(pages, curPage)
-			curPage = nil
-		}
-	}
-	if len(curPage) > 0 {
-		pages = append(pages, curPage)
-	}
-	err := enc.write([]byte{typeListQuickList})
-	if err != nil {
-		return err
-	}
-	err = enc.writeString(key)
-	if err != nil {
-		return err
-	}
-	err = enc.writeLength(uint64(len(pages)))
-	if err != nil {
-		return err
-	}
-	for _, page := range pages {
-		err = enc.writeZipList(page)
-		if err != nil {
-			return err
-		}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (enc *Encoder) writeZipList(values []string) error {
-	buf := make([]byte, 10) // reserve 10 bytes for zip list header
-	zlBytes := 11           // header(10bytes) + zl end(1byte)
-	zlTail := 10
-	var prevLen uint32
-	for i, value := range values {
-		entry := encodeZipListEntry(prevLen, value)
-		buf = append(buf, entry...)
-		prevLen = uint32(len(entry))
-		zlBytes += len(entry)
-		if i < len(values)-1 {
-			zlTail += len(entry)
-		}
-	}
-	buf = append(buf, 0xff)
-	binary.LittleEndian.PutUint32(buf[0:4], uint32(zlBytes))
-	binary.LittleEndian.PutUint32(buf[4:8], uint32(zlTail))
-	binary.LittleEndian.PutUint16(buf[8:10], uint16(len(values)))
-	return enc.writeNanString(unsafeBytes2Str(buf))
-}
+func (enc *Encoder) writeZipList(values []string) error { _ = "STUB: not implemented"; return nil }
+
+// reserve 10 bytes for zip list header
+// header(10bytes) + zl end(1byte)

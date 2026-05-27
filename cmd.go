@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/hdt3213/rdb/helper"
 )
@@ -58,14 +57,9 @@ parameters between '[' and ']' is optional
 
 type separators []string
 
-func (s *separators) String() string {
-	return strings.Join(*s, " ")
-}
+func (s *separators) String() string { _ = "STUB: not implemented"; return "" }
 
-func (s *separators) Set(value string) error {
-	*s = append(*s, value)
-	return nil
-}
+func (s *separators) Set(value string) error { _ = "STUB: not implemented"; return nil }
 
 func main() {
 	flagSet := flag.NewFlagSet(os.Args[0], flag.ExitOnError)

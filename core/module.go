@@ -1,10 +1,5 @@
 package core
 
-import (
-	"errors"
-	"fmt"
-)
-
 type Opcode uint8
 
 const (
@@ -32,117 +27,58 @@ type moduleTypeHandlerImpl struct {
 	dec *Decoder
 }
 
-func (m moduleTypeHandlerImpl) ReadByte() (byte, error) {
-	return m.dec.readByte()
-}
+func (m moduleTypeHandlerImpl) ReadByte() (byte, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (m moduleTypeHandlerImpl) ReadFull(buf []byte) error {
-	return m.dec.readFull(buf)
-}
+func (m moduleTypeHandlerImpl) ReadFull(buf []byte) error { _ = "STUB: not implemented"; return nil }
 
 func (m moduleTypeHandlerImpl) ReadOpcode() (Opcode, error) {
-	code, _, err := m.dec.readLength()
-	if err != nil {
-		return 0, err
-	}
-	if code > 5 {
-		return 0, errors.New("unknown opcode")
-	}
-	return Opcode(code), nil
+	_ = "STUB: not implemented"
+	return *new(Opcode), nil
 }
 
-func (m moduleTypeHandlerImpl) ReadUInt() (uint64, error) {
-	val, _, err := m.dec.readLength()
-	return val, err
-}
+func (m moduleTypeHandlerImpl) ReadUInt() (uint64, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (m moduleTypeHandlerImpl) ReadSInt() (int64, error) {
-	val, _, err := m.dec.readLength()
-	return int64(val), err
-}
+func (m moduleTypeHandlerImpl) ReadSInt() (int64, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m moduleTypeHandlerImpl) ReadFloat32() (float32, error) {
-	return m.dec.readFloat32()
+	_ = "STUB: not implemented"
+	return 0, nil
 }
+
 func (m moduleTypeHandlerImpl) ReadDouble() (float64, error) {
-	return m.dec.readFloat()
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m moduleTypeHandlerImpl) ReadString() ([]byte, error) {
-	return m.dec.readString()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m moduleTypeHandlerImpl) ReadLength() (uint64, bool, error) {
-	return m.dec.readLength()
+	_ = "STUB: not implemented"
+	return 0, false, nil
 }
 
 type ModuleTypeHandleFunc func(handler ModuleTypeHandler, encVersion int) (interface{}, error)
 
 func (dec *Decoder) readModuleType() (string, interface{}, error) {
-	moduleId, _, err := dec.readLength()
-	if err != nil {
-		return "", nil, err
-	}
-	return dec.handleModuleType(moduleId)
+	_ = "STUB: not implemented"
+	return "", nil, nil
 }
 
 func (dec *Decoder) handleModuleType(moduleId uint64) (string, interface{}, error) {
-	moduleType := moduleTypeNameByID(moduleId)
-	handler, found := dec.withSpecialTypes[moduleType]
-	if !found {
-		fmt.Printf("unknown module type: %s,will skip\n", moduleType)
-		handler = skipModuleAuxData
-	}
-	encVersion := moduleTypeEncVersionByID(moduleId)
-	val, err := handler(moduleTypeHandlerImpl{dec: dec}, int(encVersion))
-	return moduleType, val, err
+	_ = "STUB: not implemented"
+	return "", nil, nil
 }
 
-func moduleTypeNameByID(moduleId uint64) string {
-	cset := ModuleTypeNameCharSet
-	name := make([]byte, 9)
-	moduleId >>= 10
-	for j := 0; j < 9; j++ {
-		name[8-j] = cset[moduleId&63]
-		moduleId >>= 6
-	}
-	return string(name)
-}
+func moduleTypeNameByID(moduleId uint64) string { _ = "STUB: not implemented"; return "" }
 
-func moduleTypeEncVersionByID(moduleId uint64) uint64 {
-	return moduleId & 1023
-}
+func moduleTypeEncVersionByID(moduleId uint64) uint64 { _ = "STUB: not implemented"; return 0 }
 
 // skipModuleAuxData skips module aux data
 func skipModuleAuxData(h ModuleTypeHandler, _ int) (interface{}, error) {
-	opCode, err := h.ReadOpcode()
-	if err != nil {
-		return nil, err
-	}
-	for opCode != ModuleOpcodeEOF {
-		switch opCode {
-		case ModuleOpcodeSInt:
-			_, err = h.ReadSInt()
-		case ModuleOpcodeUInt:
-			_, err = h.ReadUInt()
-		case ModuleOpcodeFloat:
-			_, err = h.ReadFloat32()
-		case ModuleOpcodeDouble:
-			_, err = h.ReadDouble()
-		case ModuleOpcodeString:
-			_, err = h.ReadString()
-		default:
-			err = fmt.Errorf("unknown module opcode %d", opCode)
-		}
-		if err != nil {
-			return nil, err
-		}
-		opCode, err = h.ReadOpcode()
-		if err != nil {
-			return nil, err
-		}
-	}
-
+	_ = "STUB: not implemented"
 	return nil, nil
 }
 

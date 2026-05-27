@@ -1,11 +1,5 @@
 package memprofiler
 
-import (
-	"sort"
-	"strconv"
-	"unsafe"
-)
-
 var jemallocClasses = []int{
 	8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384, 448, 512, 640, 768, 896, 1024,
 	1280, 1536, 1792, 2048, 2560, 3072, 3584, 4096, 5120, 6144, 7168, 8192, 10240, 12288, 14336, 16384, 20480, 24576,
@@ -37,67 +31,39 @@ var jemallocClasses = []int{
 	8070450532247928832,
 }
 
-func getJemallocSize(req int) int {
-	i := sort.Search(len(jemallocClasses), func(i int) bool {
-		return jemallocClasses[i] >= req
-	})
-	return jemallocClasses[i]
-}
+func getJemallocSize(req int) int { _ = "STUB: not implemented"; return 0 }
 
 func sizeOfString(str string) int {
+	_ = "STUB: not implemented"
 	// https://github.com/antirez/redis/blob/unstable/src/sds.h
-	_, err := strconv.ParseInt(str, 10, 64)
-	if err == nil {
-		// REDIS_SHARED_INTEGERS
-		return 0
-	}
-	size := len(str)
-	if size < 32 { // 2^5
-		return getJemallocSize(size + 1 + 1)
-	} else if size < 256 { // 2^8
-		return getJemallocSize(size + 2 + 1)
-	} else if size < 25536 { // 2^16
-		return getJemallocSize(size + 1 + 4 + 1)
-	} else if size < 4294967296 { // 2^32
-		return getJemallocSize(size + 1 + 8 + 1)
-	}
-	return getJemallocSize(size + 1 + 16 + 1)
+	return 0
 }
 
-func sizeOfPointer() int {
-	return 8
-}
+// REDIS_SHARED_INTEGERS
 
-func sizeOfLong() int {
-	return 8
-}
+// 2^5
 
-func unsafeBytes2Str(b []byte) string {
-	return *(*string)(unsafe.Pointer(&b))
-}
+// 2^8
 
-func redisObjOverhead() int {
-	return sizeOfPointer() + 8
-}
+// 2^16
 
-func topLevelObjectOverhead(key string, hasTTl bool) int {
-	size := hashTableEntryOverhead() + sizeOfString(key) + redisObjOverhead()
-	if !hasTTl {
-		return size
-	}
-	return size + expiryOverhead()
-}
+// 2^32
+
+func sizeOfPointer() int { _ = "STUB: not implemented"; return 0 }
+
+func sizeOfLong() int { _ = "STUB: not implemented"; return 0 }
+
+func unsafeBytes2Str(b []byte) string { _ = "STUB: not implemented"; return "" }
+
+func redisObjOverhead() int { _ = "STUB: not implemented"; return 0 }
+
+func topLevelObjectOverhead(key string, hasTTl bool) int { _ = "STUB: not implemented"; return 0 }
 
 func expiryOverhead() int {
+	_ = "STUB: not implemented"
 	// Key expiry is stored in a hashtable, so we have to pay for the cost of a hashtable entry
 	// The timestamp itself is stored as an int64, which is a 8 bytes
-	return hashTableEntryOverhead() + 8
+	return 0
 }
 
-func nextPower(size int) int {
-	power := 1
-	for power <= size {
-		power <<= 1
-	}
-	return power
-}
+func nextPower(size int) int { _ = "STUB: not implemented"; return 0 }
